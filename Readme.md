@@ -27,6 +27,7 @@ npm run initialize
 Please check in docker that the containers are set up and running correctly
 
 3. Specify your IP address
+   
 in the .env file specify your IP address with the following configuration:
 
 ```bash

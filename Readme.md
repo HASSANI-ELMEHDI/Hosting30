@@ -8,6 +8,8 @@ Before you begin, ensure you have the following software installed on your machi
 - Docker: [Install Docker](https://docs.docker.com/get-docker/)
 - Node.js: [Install Node.js](https://nodejs.org/)
 
+ Please note that Docker should be running.
+
 ## Getting Started
 
 1. Clone the repository:

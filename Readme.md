@@ -15,7 +15,7 @@ Before you begin, ensure you have the following software installed on your machi
 1. Clone the repository:
 
 ```bash
-https://github.com/HASSANI-ELMEHDI/Hosting30.git
+git clone https://github.com/HASSANI-ELMEHDI/Hosting30.git
 ```
 2. install the dependencies && set up the docker environment
 

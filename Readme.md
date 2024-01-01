@@ -26,9 +26,13 @@ npm run initialize
 
 Please check in docker that the containers are set up and running correctly
 
+3. Specify your IP address
+in the .env file specify your IP address with the following configuration:
 
-3. run the app
-
+```bash
+IP_ADDRESS=your_ip_address
+```
+4. run the app
 
 in react native project to start the project run the command:
 ```bash

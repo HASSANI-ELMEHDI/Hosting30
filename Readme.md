@@ -13,25 +13,19 @@ Before you begin, ensure you have the following software installed on your machi
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/hcn31/Hosting30.git
+https://github.com/HASSANI-ELMEHDI/Hosting30.git
 ```
-2. install the dependencies
+2. install the dependencies && set up the docker environment
 
 then go to the react native project on the root run the command to install the dependencies:
 ```bash
-npm install
+npm run initialize
 ```
-3. set up the docker environment
 
-go into the express project in the root run the following commands:
-```bash
-docker-compose build
-docker-compose up -d
-```
 Please check in docker that the containers are set up and running correctly
 
 
-4. run the app
+3. run the app
 
 
 in react native project to start the project run the command:

@@ -7,6 +7,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import * as SecureStore from 'expo-secure-store';
 import { ClerkProvider, useAuth } from '@clerk/clerk-expo';
 import { AuthProvider } from '@/contex/LoginContex';
+import { initData } from '@/constants/api';
 
 
 const CLERK_PUBLISHABLE_KEY = 'pk_test_c3RpbGwtcGFudGhlci00NC5jbGVyay5hY2NvdW50cy5kZXYk';
@@ -58,6 +59,11 @@ const RootLayout = () => {
       SplashScreen.hideAsync();
     }
   }, [loaded]);
+
+
+  useEffect(() => {
+    initData();
+  }, []);
 
   if (!loaded) {
     return null;

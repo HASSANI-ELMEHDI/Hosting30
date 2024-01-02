@@ -19,7 +19,7 @@ git clone https://github.com/HASSANI-ELMEHDI/Hosting30.git
 ```
 2. install the dependencies && set up the docker environment
 
-then go to the react native project on the root run the command to install the dependencies and set up the docker environment : 
+go to the react native project on the root run the command to install the dependencies and set up the docker environment : 
 ```bash
 npm run initialize
 ```

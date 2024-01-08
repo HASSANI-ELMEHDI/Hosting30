@@ -93,10 +93,10 @@ const Page = () => {
         </TouchableOpacity>
 
       </View>
-<View style={styles.container1}>
+{/*<View style={styles.container1}>
   <Image source={require('@/assets/images/logo30.png')} style={styles.images}/>
-</View>
-    </View>
+</View>*/}
+        </View>
   );
 };
 

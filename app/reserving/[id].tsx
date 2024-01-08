@@ -1,4 +1,4 @@
-import { Link, router, useLocalSearchParams, useNavigation } from 'expo-router';
+import { useLocalSearchParams, useNavigation } from 'expo-router';
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet, Image, Dimensions, TouchableOpacity, Share, ScrollView, FlatList } from 'react-native';
 
@@ -11,9 +11,7 @@ const { width } = Dimensions.get('window');
 const IMG_HEIGHT = 300;
 const DetailsPage = () => {
 
-  const renderItem = ({ item }:any) => (
-    <Image source={{ uri: item }} style={styles.image} />
-  );
+ 
 
   const { id } = useLocalSearchParams();
   const [listingsData , setData] = useState([]);
@@ -39,21 +37,11 @@ const DetailsPage = () => {
   };
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitle: '',
+      headerTitle: 'Confirm reservation',
       headerTransparent: true,
 
       headerBackground: () => (
         <View style={[styles.header]}></View>
-      ),
-      headerRight: () => (
-        <View style={styles.bar}>
-          <TouchableOpacity style={styles.roundButton} onPress={shareListing}>
-            <Ionicons name="share-outline" size={22} color={'#000'} />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.roundButton}>
-            <Ionicons name="heart-outline" size={22} color={'#000'} />
-          </TouchableOpacity>
-        </View>
       ),
       headerLeft: () => (
         <TouchableOpacity style={styles.roundButton} onPress={() => navigation.goBack()}>
@@ -71,56 +59,31 @@ const DetailsPage = () => {
       <ScrollView
         contentContainerStyle={{ paddingBottom: 100 }}
         scrollEventThrottle={16}>
-      <FlatList
-        data={listing?.xl_picture_url}
-        renderItem={renderItem}
-        keyExtractor={(item:any, index:any) => index.toString()}
-        horizontal={true} // Set to true if you want a horizontal list
-        />
       
-        <View style={styles.infoContainer}>
-          <Text style={styles.name}>{listing?.name}</Text>
-          <Text style={styles.location}>
-            {listing?.room_type} in {listing?.smart_location}
-          </Text>
-          <Text style={styles.rooms}>
-            {listing?.guests_included} guests · {listing?.bedrooms} bedrooms · {listing?.beds} bed ·{' '}
-            {listing?.bathrooms} bathrooms
-          </Text>
-          <View style={{ flexDirection: 'row', gap: 4 }}>
-            <Ionicons name="star" size={16} />
-            <Text style={styles.ratings}>
-              {listing?.review_scores_rating / 20} · {listing?.number_of_reviews} reviews
-            </Text>
-          </View>
-          <View style={styles.divider} />
 
-          <View style={styles.hostView}>
-            <Image source={{ uri: listing?.host_picture_url }} style={styles.host} />
+         
 
-            <View>
-              <Text style={{ fontWeight: '500', fontSize: 16 }}>Hosted by {listing?.host_name}</Text>
-              <Text>Host since {listing?.host_since}</Text>
-            </View>
-          </View>
 
-          <View style={styles.divider} />
-
-          <Text style={styles.description}>{listing?.description}</Text>
-        </View>
-      </ScrollView>
+       </ScrollView>
 
       <View style={defaultStyles.footer} >
         <View
           style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
           <TouchableOpacity style={styles.footerText}>
+          <View
+          style={{ flexDirection: 'column', justifyContent: 'space-between' }}>
+            <Text>
             <Text style={styles.footerPrice}>€{listing?.price}</Text>
             <Text style={{color:Colors.primary}}> / per night</Text>
+            </Text>
+            <Text style={{color:Colors.dark,textDecorationLine :'underline'}}> 8-13 janv</Text>
+            <Text style={{color:Colors.dark}}> 2 Persons</Text>
+    
+            </View>
           </TouchableOpacity>
           
-          
-          <TouchableOpacity onPress={()=> router.push(`/reserving/${id}`)} style={[defaultStyles.btn,  { paddingRight: 20,backgroundColor: Colors.green, paddingLeft: 20 },]}>
-            <Text style={defaultStyles.btnText}>Reserve</Text>
+          <TouchableOpacity style={[defaultStyles.btn,  { paddingRight: 20,backgroundColor: Colors.yellow, paddingLeft: 20 },]}>
+            <Text style={defaultStyles.btnText}>Confirm </Text>
           </TouchableOpacity>
         </View>
       </View>

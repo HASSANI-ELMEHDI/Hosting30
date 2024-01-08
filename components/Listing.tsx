@@ -1,6 +1,7 @@
 import { defaultStyles } from '@/constants/Styles';
 
 import { Ionicons } from '@expo/vector-icons';
+import { BottomSheetFlatList } from '@gorhom/bottom-sheet';
 import { Link } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import { Image, ListRenderItem, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -9,13 +10,24 @@ import { FlatList } from 'react-native-gesture-handler';
 
 interface Props{
     listing:any[];
+    refresh: number;
     category:string;
+
 }
 
-const Listings = ({listing:items,category}:Props) => {
+const Listings = ({listing:items, refresh,category}:Props) => {
 
     const [loading, setLoading] = useState<boolean>(false);
     const listRef = useRef<FlatList>(null);
+    useEffect(() => {
+      if (refresh) {
+        scrollListTop();
+      }
+    }, [refresh]);
+
+     const scrollListTop = () => {
+    listRef.current?.scrollToOffset({ offset: 0, animated: true });
+  };
 
     useEffect(() => {
         setLoading(true);
@@ -51,13 +63,14 @@ const Listings = ({listing:items,category}:Props) => {
       )
   return (
     <View style={defaultStyles.container}>
-    <FlatList 
+    <BottomSheetFlatList
     renderItem={renderRow}
     ref={listRef}
     data={loading?[]:items.filter(item => item.type === category)}
-    >
+    ListHeaderComponent={<Text style={styles.info}>{items.filter(item => item.type === category).length} {category}</Text>}
+    />
         
-    </FlatList>
+
     </View>
   );
 };

@@ -6,13 +6,9 @@ import { Text, View } from "react-native";
 
 import ListingsMap from "@/components/ListingsMap";
 import { fetchData } from '@/constants/api';
-
-
-
+import ListingsBottomSheet from "@/components/ListingsBottomSheet";
 
 const Page = () => {
-  
-
     const [category, setCategory] = useState<string>('Rooms');
   const onDataChanged = (category: string) => {
     setCategory(category);
@@ -37,12 +33,10 @@ return (
         header : () => <ExploreHeader onCategoryChanged={onDataChanged} />
       }}
       />
-      {/* <Listings listing={items} category={category}/>*/}
-      
-      <ListingsMap listings={listingsData} category={category}/>
+    
+       <ListingsMap listings={listingsData} category={category}/>
+       <ListingsBottomSheet listings={items} category={category} />
     </View>
-
-
   );
 };
 export default Page;

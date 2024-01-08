@@ -60,9 +60,9 @@ const Page = () => {
       <TouchableOpacity style={[defaultStyles.btn,{marginTop : 30}]} onPress={onSignInPress}>
         <Text style={defaultStyles.btnText}>Connect</Text>
       </TouchableOpacity>
-      <View style={styles.container1}>
+      {/*<View style={styles.container1}>
           <Image source={require('@/assets/images/logo30.png')} style={styles.images}/>
-      </View>
+  </View>*/}
      </View>
 
 

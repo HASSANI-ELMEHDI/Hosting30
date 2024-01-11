@@ -1,14 +1,15 @@
-import { useLocalSearchParams, useNavigation } from 'expo-router';
+import { router, useLocalSearchParams, useNavigation } from 'expo-router';
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet, Image, Dimensions, TouchableOpacity, Share, ScrollView, FlatList, Button } from 'react-native';
 
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import Colors from '@/constants/Colors';
 import { defaultStyles } from '@/constants/Styles';
-import { fetchData } from '@/constants/api';
+import { fetchData, createReservation } from '@/constants/api';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import * as Haptics from "expo-haptics";
 import CalendarPicker from 'react-native-calendar-picker';
+import { useAuth, useUser } from '@clerk/clerk-expo';
 const { width } = Dimensions.get('window');
 const IMG_HEIGHT = 300;
 const AnimatedTouchableOpacity =
@@ -18,6 +19,7 @@ const DetailsPage = () => {
 
   
   const [openCard, setOpenCard] = useState(0);
+   const [nbrNights, setNbrNights] = useState(1);
   const { id } = useLocalSearchParams();
   const [listingsData , setData] = useState([]);
   const [Nbrtenants, setNbrtenants] = useState(1);
@@ -25,14 +27,25 @@ const DetailsPage = () => {
   const [selectedEndDate, setSelectedEndDate] = useState(null);
   const startDate  =  selectedStartDate ? selectedStartDate.toString() : '';
     const endDate = selectedEndDate ? selectedEndDate.toString() : '';
-  const onDateChange = (date, type) => {
+  const onDateChange = (date : any , type : any) => {
     if (type === 'END_DATE') {
       setSelectedEndDate(date);
     } else {
       setSelectedStartDate(date);
-      setSelectedEndDate(date);
+      setSelectedEndDate(null);
     }
+	
   }
+  useEffect(() => {
+	if( selectedStartDate && selectedEndDate) 
+	{
+		// ToDo : calculate nbr of days bw start & end date
+		const nbr = parseInt(endDate.split(" ")[2]) - parseInt(startDate.split(" ")[2])
+		setNbrNights(nbr +1) 
+	}
+    
+  }, [selectedStartDate ,selectedEndDate]);
+
 
   const minDate = new Date(); // Todo : min from database
   const maxDate = new Date(2024, 0, 15); // Todo : max from database
@@ -45,7 +58,34 @@ const DetailsPage = () => {
   }, []);
   const listing = (listingsData as any[]).find((item) => item._id === id);
   const navigation = useNavigation();
+  const { user } = useUser();
+  const { isLoaded, isSignedIn } = useAuth();
+  const [email, setEmail] = useState(user?.emailAddresses[0].emailAddress);
+const reserver = () =>
+{ 
+	  if(isSignedIn)
+	  {
+		if(!selectedEndDate) setSelectedEndDate(selectedStartDate);
+		const newReservation = {
+			logmentId: id, 
+			startDate: selectedStartDate, 
+			endDate: selectedEndDate, 
+			status: 'comming', 
+			nbrTenants: Nbrtenants, 
+			price: nbrNights * listing?.price, 
+			idLodger : email,
+		  };
+		createReservation(newReservation)
+		.then(data => {
+		  console.log(data); 
+		  router.replace('/(tabs)/reservations');
+		})
+		.catch(error => {
+		  console.error(error);
+		});
 
+	  }else router.replace('/login');
+}
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -207,24 +247,31 @@ const DetailsPage = () => {
           <View
           style={{ flexDirection: 'column', justifyContent: 'space-between' }}>
             <Text>
-            <Text style={styles.footerPrice}>€{listing?.price}</Text>
-            <Text style={{color:Colors.primary}}> / per night</Text>
+			<Text style={{color:Colors.primary,textDecorationLine :'underline'}}>Total :</Text>
+            <Text style={styles.footerPrice}> €{listing?.price * nbrNights}</Text>
             </Text>
-            { ( selectedStartDate && selectedEndDate ) && (
+			<Text style={{color:Colors.dark}}> {Nbrtenants} Tenant(s)</Text>
+        
                      <Text style={{color:Colors.dark,textDecorationLine :'underline'}}>
-                      { startDate.split(" ")[1] } { startDate.split(" ")[2]} - 
+                      { startDate.split(" ")[1] } { startDate.split(" ")[2]}
+					  { ( selectedStartDate && selectedEndDate ) && (<Text>-</Text>  )}
                       { endDate.split(" ")[1] } { endDate.split(" ")[2] }
                     </Text>
-            )}
-           
-            <Text style={{color:Colors.dark}}> {Nbrtenants} Tenant(s)</Text>
-    
+            
             </View>
           </TouchableOpacity>
           
-          <TouchableOpacity style={[defaultStyles.btn,  { paddingRight: 20,backgroundColor: Colors.primary, paddingLeft: 20 },]}>
-            <Text style={defaultStyles.btnText}>Confirm </Text>
-          </TouchableOpacity>
+          <TouchableOpacity
+                  style={[
+                         defaultStyles.btn,
+                         { paddingRight: 20, paddingLeft: 20 },
+						 selectedStartDate ? { backgroundColor: Colors.primary } : { backgroundColor: Colors.grey },
+                        ]}
+                onPress={reserver}
+                disabled={!selectedStartDate}
+            >
+  <Text style={defaultStyles.btnText}>Confirm</Text>
+</TouchableOpacity>
         </View>
       </View>
     </View>

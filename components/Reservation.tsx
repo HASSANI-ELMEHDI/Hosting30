@@ -1,8 +1,9 @@
 import Colors from '@/constants/Colors';
-import { Link } from 'expo-router';
+import { Link, router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Text, Image, TouchableOpacity, ScrollView } from 'react-native';
-import { fetchReservations } from '@/constants/api';
+import { fetchLogmentById, fetchReservations } from '@/constants/api';
+import { useAuth, useUser } from '@clerk/clerk-expo';
 interface CardViewProps {
   imageSource: string;
   title: string;
@@ -45,7 +46,12 @@ const CardView: React.FC<CardViewProps> = ({
 };
 
 const App = () => {
-const [Reservations,setResservations] =useState([]);
+  const { user } = useUser();
+  const { isLoaded, isSignedIn } = useAuth();
+  const [email, setEmail] = useState(user?.emailAddresses[0].emailAddress);
+  console.log(email)
+  if(isSignedIn){
+const [Reservations,setResservations] =useState<any[]>([]);
   useEffect(() => {
     fetchReservations()
       .then(data => {
@@ -56,27 +62,44 @@ const [Reservations,setResservations] =useState([]);
     console.log('Card pressed!');
   };
 
+
+  const userReservations = Reservations.filter(item => item.idLodger === email);
+  const noUserReservations = userReservations.length === 0;
+
   return (
     <ScrollView>
     <View style={styles.container}>
-     
-      {Reservations.map( (item,index) =>
-      <CardView
-        key={index}
-        imageSource='https://a0.muscache.com/im/pictures/bced1392-9538-41df-92d9-f058a7188b0f.jpg?aki_policy=x_large'
-        title='Room with big terrace & private bath'
-        endDate="1 Jan"
-        startDate="3 Jan"
-        status="Comming"
-        smart_location='Berlin, Germany'
-        onPress={handleCardPress}
-      />
-
+    {noUserReservations ? (
+        <View style={styles.empty}>
+          <Text style={styles.emptyTitle}>No accommodations booked for this user...yet!</Text>
+          <Text style={styles.emptyText}>
+            Your dream accommodation for the World Cup:
+            <Text style={{ fontWeight: 'bold' }}> Welcome the World to Your Home!</Text>
+          </Text>
+          <TouchableOpacity style={styles.emptyBtn} onPress={() => { /* Handle navigation or search */ }}>
+            <Text style={styles.emptyBtnText}>Start searching</Text>
+          </TouchableOpacity>
+        </View>
+      ) : (
+        userReservations.map((item, index) => {
+          return (
+            <CardView
+              key={index}
+              imageSource={item.imageSource}
+              title={item.title}
+              endDate={item.endDate}
+              startDate={item.startDate}
+              status={item.status}
+              smart_location={item.smart_location}
+              onPress={() => handleCardPress()}
+            />
+          );
+        })
       )}
-      
     </View>
     </ScrollView>
   );
+}else router.replace('/login');
 };
 
 const styles = StyleSheet.create({
@@ -121,6 +144,12 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 10,
     marginRight: 3,
   },
+  empty: {
+		marginTop: 25,
+		marginHorizontal: 30,
+		paddingBottom: 30,
+		
+	},
   cardContent: {
     flex: 1,
   },

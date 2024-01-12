@@ -83,3 +83,11 @@ export const deleteReservation = (id: string): Promise<any> => {
     });
 };
 
+
+export const fetchLogmentById=(id:String):Promise<any>=>{
+  return axios.get(`${URL}${id}`).then(response=>{
+    return response.data;
+  }).catch(error => {
+    console.error(error);
+  });
+}

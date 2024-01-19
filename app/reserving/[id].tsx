@@ -48,7 +48,7 @@ const DetailsPage = () => {
 
 
   const minDate = new Date(); // Todo : min from database
-  const maxDate = new Date(2024, 0, 15); // Todo : max from database
+  const maxDate = new Date(2024, 0,25 ); // Todo : max from database
 
   useEffect(() => {
     fetchData()
@@ -68,6 +68,9 @@ const reserver = () =>
 		if(!selectedEndDate) setSelectedEndDate(selectedStartDate);
 		const newReservation = {
 			logmentId: id, 
+			title: listing?.name,
+          imgUrl : listing?.xl_picture_url[0],
+            smartAdress : listing?.smart_location,
 			startDate: selectedStartDate, 
 			endDate: selectedEndDate, 
 			status: 'comming', 

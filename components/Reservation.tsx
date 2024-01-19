@@ -2,9 +2,12 @@ import Colors from '@/constants/Colors';
 import { Link, router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Text, Image, TouchableOpacity, ScrollView } from 'react-native';
-import { fetchLogmentById, fetchReservations } from '@/constants/api';
+import { fetchLogmentById, fetchReservations,deleteReservation } from '@/constants/api';
 import { useAuth, useUser } from '@clerk/clerk-expo';
+import moment from 'moment';
 interface CardViewProps {
+  id : string;
+  logmentId : string;
   imageSource: string;
   title: string;
   endDate: string;
@@ -15,6 +18,8 @@ interface CardViewProps {
 }
 
 const CardView: React.FC<CardViewProps> = ({
+  id,
+  logmentId ,
   imageSource,
   title,
   endDate,
@@ -25,23 +30,26 @@ const CardView: React.FC<CardViewProps> = ({
 }) => {
 
   return (
-    <Link href={"/(tabs)/"} asChild style={{ marginTop: 3 }}>
-      <TouchableOpacity onPress={onPress} style={styles.card}>
-        <Image source={{ uri: imageSource }} style={styles.cardImage} />
+    <Link href={`/listing/${logmentId}`} asChild>
+      <TouchableOpacity style={styles.card} >
+         <Image source={{ uri: imageSource }} style={styles.cardImage}  />
         <View style={styles.cardContent}>
           <Text style={styles.emptyTitle}>{title}</Text>
           <Text style={styles.emptyText}>{smart_location}</Text>
           <View style={styles.containerBtn}>
             <View style={styles.emptyBtnContainer}>
-              <TouchableOpacity style={styles.emptyBtn}>
+              <TouchableOpacity style={styles.emptyBtn} onPress={onPress}>
                 <Text style={styles.emptyBtnText}>Cancel</Text>
               </TouchableOpacity>
             </View>
-            <Text style={styles.additionalText}>{endDate}-{startDate}</Text>
+            <Text style={styles.additionalText}>{moment(startDate).format('D MMM')} - {moment(endDate).format('D MMM')}</Text>
+
+             {/*<Text style={styles.additionalText}>01 Jan-10 Jan</Text>*/}
           </View>
         </View>
       </TouchableOpacity>
-    </Link>
+      </Link>
+     
   );
 };
 
@@ -49,7 +57,6 @@ const App = () => {
   const { user } = useUser();
   const { isLoaded, isSignedIn } = useAuth();
   const [email, setEmail] = useState(user?.emailAddresses[0].emailAddress);
-  console.log(email)
   if(isSignedIn){
 const [Reservations,setResservations] =useState<any[]>([]);
   useEffect(() => {
@@ -57,9 +64,18 @@ const [Reservations,setResservations] =useState<any[]>([]);
       .then(data => {
         setResservations(data);
       });
-  }, []);
-  const handleCardPress = () => {
-    console.log('Card pressed!');
+  }, [Reservations]);
+  const cancelReservation = (id : string) => {
+    
+    deleteReservation(id)
+    console.log("dellllete : "+ id)
+    fetchReservations()
+    .then(data => {
+      setResservations(data);
+    })
+    .catch(error => {
+     
+    });
   };
 
 
@@ -71,27 +87,33 @@ const [Reservations,setResservations] =useState<any[]>([]);
     <View style={styles.container}>
     {noUserReservations ? (
         <View style={styles.empty}>
-          <Text style={styles.emptyTitle}>No accommodations booked for this user...yet!</Text>
-          <Text style={styles.emptyText}>
-            Your dream accommodation for the World Cup:
-            <Text style={{ fontWeight: 'bold' }}> Welcome the World to Your Home!</Text>
-          </Text>
-          <TouchableOpacity style={styles.emptyBtn} onPress={() => { /* Handle navigation or search */ }}>
-            <Text style={styles.emptyBtnText}>Start searching</Text>
-          </TouchableOpacity>
-        </View>
+				<Text style={styles.emptyTitle}>No accommodations booked...yet!</Text>
+
+				<Text style={[styles.emptyText,{marginTop : 30, marginBottom : 40}]}>
+           Your dream accommodation for the World Cup:
+           <Text style={{fontWeight :'bold'}}> Welcome the World to Your Home!</Text>
+				</Text>
+
+				<Link href={"/(tabs)/"} asChild>
+					<TouchableOpacity style={styles.emptyBtn1}>
+						<Text style={styles.emptyBtnText1}>Start searching</Text>
+					</TouchableOpacity>
+				</Link>
+			</View>
       ) : (
         userReservations.map((item, index) => {
           return (
             <CardView
               key={index}
-              imageSource={item.imageSource}
+              id={item._id}
+              logmentId ={item.logmentId }
+              imageSource={item.imgUrl}
               title={item.title}
               endDate={item.endDate}
               startDate={item.startDate}
               status={item.status}
-              smart_location={item.smart_location}
-              onPress={() => handleCardPress()}
+              smart_location={item.smartAdress}
+              onPress={() => cancelReservation(item._id)}
             />
           );
         })
@@ -106,7 +128,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#fff',
   },
   emptyTitle: {
     color: "#000",
@@ -171,6 +193,20 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Colors.primary,
     borderRadius: 8,
+  },
+  emptyBtn1: {
+    padding: 7,
+    margin: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: Colors.grey,
+    borderRadius: 8,
+  },
+  emptyBtnText1: {
+    color: Colors.grey,
+    fontSize: 14,
+    fontFamily: "mon-sb",
   },
   emptyBtnText: {
     color: Colors.primary,

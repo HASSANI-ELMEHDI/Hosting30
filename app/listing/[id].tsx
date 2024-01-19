@@ -19,10 +19,12 @@ const DetailsPage = () => {
   const [listingsData , setData] = useState([]);
 
   useEffect(() => {
+    console.log("Comming with id :", id)
     fetchData()
       .then(data => {
         setData(data);
       });
+      console.log("The data:", listingsData)
   }, []);
   const listing = (listingsData as any[]).find((item) => item._id === id);
   const navigation = useNavigation();

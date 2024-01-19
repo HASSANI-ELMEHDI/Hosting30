@@ -44,6 +44,7 @@ const Page = () => {
 					</TouchableOpacity>
 				</Link>
 			</View>*/}
+			
       <BookingCard/>
       
 		</View>

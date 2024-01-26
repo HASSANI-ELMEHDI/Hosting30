@@ -1,11 +1,11 @@
 import Colors from '@/constants/Colors';
-import { Ionicons } from '@expo/vector-icons';
+import { AntDesign, Ionicons } from '@expo/vector-icons';
 import { useFonts } from 'expo-font';
 import { SplashScreen, Stack, useRouter,useSegments } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import * as SecureStore from 'expo-secure-store';
-import { ClerkProvider, useAuth } from '@clerk/clerk-expo';
+import { ClerkProvider, useAuth, useUser } from '@clerk/clerk-expo';
 import { AuthProvider } from '@/contex/LoginContex';
 import { initData } from '@/constants/api';
 
@@ -79,19 +79,23 @@ const RootLayout = () => {
 }
 
 const RootLayoutNav = () => {
-  const { isLoaded, isSignedIn } = useAuth();
+  const { isLoaded, isSignedIn,signOut } = useAuth();
   const segments = useSegments();
   const router = useRouter();
+  const { user } = useUser();
+  const [strategyAuth, setStrategyAuth] = useState(user?.externalAccounts[0]?.verification?.strategy);
 
+ 
   useEffect(() => {
     if (!isLoaded) return;
+    setStrategyAuth(user?.externalAccounts[0]?.verification?.strategy)
     console.log('User changed: ', isSignedIn);
     if (isSignedIn) {
-      router.replace('/(tabs)');
+      strategyAuth === "oauth_google" ? router.replace('/hoster/') : router.replace('/(tabs)') 
     } else if (!isSignedIn) {
       router.replace('/login');
     }
-  }, [isSignedIn]);
+  }, [isSignedIn,strategyAuth]);
 
   
   return (
@@ -127,6 +131,42 @@ const RootLayoutNav = () => {
           ),
         }}
       />
+
+   <Stack.Screen
+        name="hoster/add"
+        options={{
+          presentation: 'modal',
+          title: 'Add offer',
+          headerTitleStyle: {
+            fontFamily: 'mon-sb',
+            
+          },
+          headerLeft: () => (
+            <TouchableOpacity onPress={() => router.replace('/hoster/')}>
+              <Ionicons name="arrow-back" size={28} color="black" style={{marginRight : 10}} />
+            </TouchableOpacity>
+          ),
+        }}
+      />
+
+      <Stack.Screen
+        name="hoster/index"
+        options={{
+          presentation: 'modal',
+          title: 'Offers management ',
+          headerTitleStyle: {
+            fontFamily: 'mon-sb',
+          },
+          headerRight: () => (
+            <TouchableOpacity onPress={() =>{
+              signOut()
+              router.replace('/')            }
+            }>
+              <AntDesign name="logout" size={28} color={Colors.primary} />
+            </TouchableOpacity>
+          ),
+        }}
+        />
        <Stack.Screen name="listing/[id]" options={{ headerTitle: '',headerTransparent:true }} />
        <Stack.Screen name="reserving/[id]" options={{ headerTitle: '',headerTransparent:false }} />
        <Stack.Screen

@@ -7,6 +7,7 @@ import React, { useState } from 'react';
 import { View, StyleSheet, TextInput, Text, TouchableOpacity, Button } from 'react-native';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { OtpInput } from 'react-native-otp-entry';
+import { useUser } from '@clerk/clerk-expo';
 
 // https://github.com/clerkinc/clerk-expo-starter/blob/main/components/OAuth.tsx
 import { useWarmUpBrowser } from '@/hooks/useWarmUpBrowser';
@@ -19,6 +20,8 @@ enum Strategy {
   Google = 'oauth_google',
 }
 const Page = () => {
+
+
   useWarmUpBrowser();
 
   const router = useRouter();
@@ -54,7 +57,7 @@ const Page = () => {
   return (
     <View style={styles.container}>
       <Spinner visible={loading} />
-      <Text style={[styles.btnOutlineText,styles.text]}>Hoster!</Text>
+      <Text style={[styles.btnOutlineText,styles.text]}>Lodger!</Text>
       <TextInput
         autoCapitalize="none"
         placeholder="Email"
@@ -85,7 +88,7 @@ const Page = () => {
       </View>
 
       <View style={{ gap: 20 }}>
-      <Text style={[styles.btnOutlineText,styles.text]}>Lodger!</Text>
+      <Text style={[styles.btnOutlineText,styles.text]}>Hoster!</Text>
 
         <TouchableOpacity style={styles.btnOutline} onPress={() => onSelectAuth(Strategy.Google)}>
           <Ionicons name="md-logo-google" size={24} style={defaultStyles.btnIcon} />

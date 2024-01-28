@@ -1,16 +1,19 @@
 import { Link, router, useLocalSearchParams, useNavigation } from 'expo-router';
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { View, Text, StyleSheet, Image, Dimensions, TouchableOpacity, Share, ScrollView, FlatList } from 'react-native';
+import { View, Text, StyleSheet, Image, Dimensions, TouchableOpacity, Share, ScrollView, FlatList, Button } from 'react-native';
 
-import { Ionicons } from '@expo/vector-icons';
+import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import Colors from '@/constants/Colors';
 import { defaultStyles } from '@/constants/Styles';
 import { fetchData } from '@/constants/api';
+import Itinerary from '@/components/Itinerary';
+import MapScreen from '@/components/Itinerary';
 
 const { width } = Dimensions.get('window');
 const IMG_HEIGHT = 300;
 const DetailsPage = () => {
 
+  const [showMap,setShowMap] = useState(false);
   const renderItem = ({ item }:any) => (
     <Image source={{ uri: item }} style={styles.image} />
   );
@@ -49,12 +52,18 @@ const DetailsPage = () => {
       ),
       headerRight: () => (
         <View style={styles.bar}>
+           <Link href={`/naviging/${id}`} asChild>
+              <TouchableOpacity style={styles.roundButton}>
+                <FontAwesome name="location-arrow" size={22} color={'#000'} />
+              </TouchableOpacity>
+           </Link>
           <TouchableOpacity style={styles.roundButton} onPress={shareListing}>
             <Ionicons name="share-outline" size={22} color={'#000'} />
           </TouchableOpacity>
           <TouchableOpacity style={styles.roundButton}>
             <Ionicons name="heart-outline" size={22} color={'#000'} />
           </TouchableOpacity>
+          
         </View>
       ),
       headerLeft: () => (
@@ -64,13 +73,9 @@ const DetailsPage = () => {
       ),
     });
   }, []);
-
-
-
-
   return (
     <View style={styles.container}>
-      <ScrollView
+   <ScrollView
         contentContainerStyle={{ paddingBottom: 100 }}
         scrollEventThrottle={16}>
       <FlatList
@@ -79,7 +84,7 @@ const DetailsPage = () => {
         keyExtractor={(item:any, index:any) => index.toString()}
         horizontal={true} // Set to true if you want a horizontal list
         />
-      
+         
         <View style={styles.infoContainer}>
           <Text style={styles.name}>{listing?.name}</Text>
           <Text style={styles.location}>
@@ -110,6 +115,7 @@ const DetailsPage = () => {
 
           <Text style={styles.description}>{listing?.description}</Text>
         </View>
+     
       </ScrollView>
 
       <View style={defaultStyles.footer} >
@@ -119,13 +125,12 @@ const DetailsPage = () => {
             <Text style={styles.footerPrice}>€{listing?.price}</Text>
             <Text style={{color:Colors.primary}}> / per night</Text>
           </TouchableOpacity>
-          
-          
+ 
           <TouchableOpacity onPress={()=> router.push(`/reserving/${id}`)} style={[defaultStyles.btn,  { paddingRight: 20,backgroundColor: Colors.green, paddingLeft: 20 },]}>
             <Text style={defaultStyles.btnText}>Reserve</Text>
           </TouchableOpacity>
         </View>
-      </View>
+    </View>
     </View>
   );
 };

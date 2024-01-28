@@ -54,8 +54,7 @@ const ExploreHeader = ({ onCategoryChanged }: Props) => {
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff', marginTop:40}}>
       <View style={styles.container}>
         <View style={styles.actionRow}>
-          <Link href={'/(modals)/booking'} asChild>
-            <TouchableOpacity>
+          
               <View style={styles.searchBtn}>
                 <Ionicons name="search" size={24} style={{color:Colors.green}} />
                 <View>
@@ -63,8 +62,7 @@ const ExploreHeader = ({ onCategoryChanged }: Props) => {
                   <Text style={{ color: Colors.grey, fontFamily: 'mon' }}>Rent your logement</Text>
                 </View>
               </View>
-            </TouchableOpacity>
-          </Link>
+           
           <TouchableOpacity style={styles.filterBtn}>
             <Ionicons name="options-outline" size={24} />
           </TouchableOpacity>

@@ -5,14 +5,17 @@ import First from './first';
 import Second from './second';
 import Third from './third';
 import Fourth from './fourth';
+import {ContProvider} from '@/contex/context'
+
 const Page = () => {
   const [page, setPage] = useState(1);
+  
 
   return (
     <View style={{ flex: 1 }}>
+      <ContProvider>
       {page === 1 ? <First /> : page === 2 ? <Second /> : page === 3 ? <Third /> : <Fourth />}
       <View style={styles.buttons}>
-
       {page == 1 && (
         <TouchableOpacity
         style={{ ...styles.button, backgroundColor: 'green', marginLeft: 'auto'  }}
@@ -49,7 +52,8 @@ const Page = () => {
         </TouchableOpacity>
       )}
     </View>
-    </View>
+    </ContProvider>
+   </View>
   );
 };
 const styles=StyleSheet.create({

@@ -1,12 +1,12 @@
-import { Text, TextInput, View } from "react-native";
-import React, { useEffect, useState } from 'react'
+import { Keyboard, Text, TextInput, View } from "react-native";
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import MapView, { LatLng, Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { StyleSheet } from "react-native";
 import { Dimensions } from "react-native";
 import * as Location from 'expo-location';
 import { TouchableOpacity } from "react-native-gesture-handler";
 import Colors from "@/constants/Colors";
-
+import { usePro } from "@/contex/context";
 
 
 const { width, height } = Dimensions.get('window');
@@ -15,17 +15,35 @@ const LATITUDE_DELTA = 0.02;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
 
-
 const third = () => {
+  const {Coordina,setCoordina}=usePro()
+
+
+const onMapPress = (e: any) => {
+    setCoordina(e.nativeEvent.coordinate)
+    console.log(Coordina)
+};
   const [searchText,setSearchText]=useState("")
+  const [results,setResults]=useState<any[]>([])
+  const map=useRef<MapView|null>(null)
   const [location, setLocation] = useState<any>(null);
+  const [codeExecuted, setCodeExecuted] = useState(false);
+
   useEffect(() => {
     (async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
       const locationn = await Location.getCurrentPositionAsync({});
       setLocation(locationn);
+      
     })();
   }, [location]);
+  useEffect(()=>{
+    if(location && !codeExecuted){
+      const { latitude, longitude } = location.coords;
+      setCoordina({ latitude, longitude });
+      setCodeExecuted(true);
+      }
+  },[location,codeExecuted])
 const searchPlaces=async ()=>{
   if(!searchText.trim().length) return;
    
@@ -46,6 +64,19 @@ try{
         longitude:item.geometry.location.lng
       })
     }
+    setResults(json.results)
+    if(coords.length){
+        map.current?.fitToCoordinates(coords,{
+          edgePadding: {
+            top:50,
+            right:50,
+            bottom:50,
+            left:50
+          },
+          animated:true
+        })
+        Keyboard.dismiss()
+    }
   }
 }catch(e){
  console.log(e)
@@ -58,14 +89,25 @@ try{
       <View style={styles.container}>
         {location?(
        <View style={styles.container}>
-        <MapView style={styles.map} provider={PROVIDER_GOOGLE} initialRegion={ {latitude:location.coords.latitude,longitude:location.coords.longitude,latitudeDelta:LATITUDE_DELTA,longitudeDelta:LONGITUDE_DELTA}}> 
-          <Marker  coordinate={{latitude:location.coords.latitude,longitude:location.coords.longitude}} >
+        <MapView style={styles.map} ref={map} onPress={onMapPress} provider={PROVIDER_GOOGLE} initialRegion={ {latitude:location.coords.latitude,longitude:location.coords.longitude,latitudeDelta:LATITUDE_DELTA,longitudeDelta:LONGITUDE_DELTA}}> 
+          {Coordina &&(
+          <Marker coordinate={Coordina} />
+          )
+}
+          <Marker  coordinate={{latitude:location.coords.latitude,longitude:location.coords.longitude}} >      
           <View style={styles.markerContainer}>
       <View style={styles.markerCircle}>
         <View style={styles.markerCore} />
       </View>
         </View>
-        </Marker>    
+        </Marker>  
+        {results.length?results.map((item,i)=>{
+            const coord:LatLng={
+              latitude:item.geometry.location.lat,
+              longitude:item.geometry.location.lng,
+            }
+            return <Marker key={`serch-item-${i}`} coordinate={coord} title={item.name} description=""/>
+          }):null}  
         </MapView>
         <View style={styles.searchBox}>
           <Text style={{fontSize:18}}>Search Place</Text>

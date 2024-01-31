@@ -78,8 +78,12 @@ const saveImage = async (uri: string) => {
 	await FileSystem.copyAsync({ from: uri, to: dest });
 	setImages([...images, dest]);
 	closeModal()
-	uploadImage()
+	
 };
+
+useEffect (()=> {
+	if(images.length) uploadImage()
+},[images])
 
 const uploadImage = async () => {
     const blob = await new Promise((resolve, reject) => {
@@ -91,7 +95,9 @@ const uploadImage = async () => {
         reject(new TypeError('Network request failed'));
       };
       xhr.responseType = 'blob';
-      xhr.open('GET', images[images.length-1], true);
+	  const lastIndex=images.length -1 ;
+	  console.log("_____",lastIndex)
+      xhr.open('GET', images[lastIndex], true);
       xhr.send(null);
     })
     const ref = firebase.storage().ref().child(`Pictures/Image1`)
@@ -110,7 +116,7 @@ const uploadImage = async () => {
         snapshot.snapshot.ref.getDownloadURL().then((url) => {
           setUploading(false)
           console.log("Download URL: ", url)
-		  
+
           blob.close()
           return url
         })

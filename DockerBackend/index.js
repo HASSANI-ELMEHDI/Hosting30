@@ -14,6 +14,17 @@ app.use(express.json());
 connectDB();
 
 
+app.post('/logement', async (req, res) => {
+  try {
+    const logementData = req.body;
+    const logement = await Logement.create(logementData);
+    res.json(logement);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
+
 app.get('/logements', async (req, res) => {
     try {
         const logements= await Logement.find();

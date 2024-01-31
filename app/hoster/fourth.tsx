@@ -82,14 +82,18 @@ const saveImage = async (uri: string) => {
 	closeModal()
 	
 };
+const [prevTableLength, setPrevTableLength] = useState(0);
+
 
 useEffect (()=> {
-	if(images.length) uploadImage()
+	if(images.length>prevTableLength && images.length) uploadImage()
+	setPrevTableLength(images.length)
 },[images])
 
 useEffect (()=> {
 	myImages.pop()
 },[])
+
 
 const uploadImage = async () => {
     const blob = await new Promise((resolve, reject) => {
@@ -121,9 +125,7 @@ const uploadImage = async () => {
       () => {
         snapshot.snapshot.ref.getDownloadURL().then((url) => {
           setUploading(false)
-          console.log("Download URL: ", url)
 		  myImages.push(url)
-		  console.log(myImages)
           blob.close()
           return url
         })
@@ -134,8 +136,15 @@ const uploadImage = async () => {
 // Delete image from file system
 const deleteImage = async (uri: string) => {
 	await FileSystem.deleteAsync(uri);
+	for(const [index, e] of images.entries()){
+		if(e===uri)
+		{
+			const newArray = [...myImages];
+			newArray.splice(index, 1);
+			setMyImages(newArray)
+		}
+	}
 	setImages(images.filter((i) => i !== uri));
-	setMyImages(myImages.filter((i) => i !== uri))
 };
 
 // Render image list item

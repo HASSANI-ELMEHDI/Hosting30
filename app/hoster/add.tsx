@@ -39,6 +39,17 @@ const Page = () => {
           <Text style={styles.text}>Back</Text>
         </TouchableOpacity>
       )}
+      {page == 4 && (
+        <TouchableOpacity
+        style={{ ...styles.button, backgroundColor: 'green', marginLeft: 'auto'  }}
+          onPress={() => {
+            let pg = page;
+            setPage(pg - 1);
+          }}
+        >
+          <Text style={styles.text}>Save</Text>
+        </TouchableOpacity>
+      )}
 
       {page < 4 && page>1 && (
         <TouchableOpacity

@@ -4,6 +4,8 @@ import { IP_ADDRESS} from '@env';
 const URL=`http://${IP_ADDRESS}:5000/logements/`
 const URL_init=`http://${IP_ADDRESS}:5000/logements/initialize`
 const URL_reservations = `http://${IP_ADDRESS}:5000/reservations/`;
+const URL_logement=`http://${IP_ADDRESS}:5000/logement`
+
 
 console.log(URL)
 export const fetchData = () => {
@@ -53,6 +55,18 @@ export const fetchReservation = (id: string): Promise<any> => {
 export const createReservation = (reservationData: any): Promise<any> => {
   return axios
     .post(URL_reservations, reservationData)
+    .then(response => {
+      return response.data;
+    })
+    .catch(error => {
+      console.error(error);
+    });
+};
+
+
+export const createLogement = (logementData: any): Promise<any> => {
+  return axios
+    .post(URL_logement, logementData)
     .then(response => {
       return response.data;
     })

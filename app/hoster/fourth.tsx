@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { usePro } from '@/contex/context';
 import {
 	Button,
 	Image,
@@ -30,6 +31,7 @@ const ensureDirExists = async () => {
 };
 
 export default function App() {
+	const {myImages,setMyImages}=usePro()
 	const [modalVisible, setModalVisible] = useState(false);
 	const openModal = () => {
 	  setModalVisible(true);
@@ -85,6 +87,10 @@ useEffect (()=> {
 	if(images.length) uploadImage()
 },[images])
 
+useEffect (()=> {
+	myImages.pop()
+},[])
+
 const uploadImage = async () => {
     const blob = await new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
@@ -116,7 +122,8 @@ const uploadImage = async () => {
         snapshot.snapshot.ref.getDownloadURL().then((url) => {
           setUploading(false)
           console.log("Download URL: ", url)
-
+		  myImages.push(url)
+		  console.log(myImages)
           blob.close()
           return url
         })
@@ -128,6 +135,7 @@ const uploadImage = async () => {
 const deleteImage = async (uri: string) => {
 	await FileSystem.deleteAsync(uri);
 	setImages(images.filter((i) => i !== uri));
+	setMyImages(myImages.filter((i) => i !== uri))
 };
 
 // Render image list item

@@ -149,7 +149,7 @@ const second = () => {
         </View>
         <View style={stylesBody.card}>
         <Text style={stylesBody.cardHeader}>
-								Access
+								Title
 			  </Text>
           <TextInput style={[stylesBody.cardBody, { margin: 10, marginTop:-20}]}
         placeholder="Type something..."

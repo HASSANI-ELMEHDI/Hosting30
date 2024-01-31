@@ -104,6 +104,8 @@ const DetailsPage = () => {
           <View style={styles.divider} />
 
           <Text style={styles.description}>{listing?.description}</Text>
+          <Text>Rules</Text>
+          <Text style={styles.description}>{listing?.house_rules}</Text>
         </View>
      
       </ScrollView>

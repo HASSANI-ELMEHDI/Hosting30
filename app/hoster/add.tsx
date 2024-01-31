@@ -5,16 +5,97 @@ import First from './first';
 import Second from './second';
 import Third from './third';
 import Fourth from './fourth';
-import {ContProvider} from '@/contex/context'
+import { useUser } from '@clerk/clerk-expo';
+import { usePro } from '@/contex/context';
+import { createLogement } from '@/constants/api';
+import { router } from 'expo-router';
 
+function generateRandomId() {
+  const timestamp = new Date().getTime();
+  const randomNumber = Math.floor(Math.random() * 10000);
+  const id = `${timestamp}-${randomNumber}`;
+  return id;
+}
 const Page = () => {
+  const [done,setDone]=useState(false)
+  const { user } = useUser();
+  const [email, setEmail] = useState(user?.emailAddresses[0].emailAddress);
+  const [firstName, setFirstName] = useState(user?.firstName);
+  const [lastName, setLastName] = useState(user?.lastName);
   const [page, setPage] = useState(1);
+  const { Type,setType,
+    Start,setStart,
+    End,setEnd,
+    Numberppl,setNumberppl,
+    Description,setDescription,
+    Rules,setRules,
+    Access,setAccess,
+    Price,setPrice,
+    Coordina,setCoordina,
+    myImages,setMyImages,
+  }=usePro()
+    const convertDateFormat = (originalDate) => {
+      const parts = originalDate.split('/');
+      const formattedDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
+      return formattedDate;
+    };
+const saveLogement=()=>{
+  setTimeout(() => {
+    
+    const newLogement={
+      "type": Type,
+      "id": generateRandomId(),
+      "listing_url": myImages[0],
+      "name": Access,
+      "description": Description,
+      "house_rules": Rules,
+      "medium_url": myImages,
+      "xl_picture_url": myImages,
+      "host_id": email,
+      "host_name": firstName+" "+lastName,
+      "host_since": convertDateFormat(user?.createdAt!.toLocaleDateString()),
+      "host_picture_url": user?.imageUrl,
+      "smart_location": "Bouznika",
+      "latitude": Coordina?.latitude,
+      "longitude": Coordina?.longitude,
+      "accommodates": Numberppl,
+      "price": Price,
+      "geolocation": {
+        "lon": Coordina?.latitude,
+        "lat": Coordina?.longitude
+      },
+      "Start":Start,
+      "End":End
+     }
+     createLogement(newLogement).then(data => {
+		  console.log(data); 
+		  router.replace('/hoster/');
+		})
+		.catch(error => {
+		  console.error(error);
+		});
+    setType("")
+  setStart(new Date())
+  setEnd(new Date())
+  setNumberppl(1)
+  setDescription("")
+  setRules("")
+  setAccess("")
+  setPrice(0)
+  setCoordina(null)
+  setMyImages([])
   
+
+  }, 3000);
+  
+}
+
+
 
   return (
     <View style={{ flex: 1 }}>
-      <ContProvider>
-      {page === 1 ? <First /> : page === 2 ? <Second /> : page === 3 ? <Third /> : <Fourth />}
+ 
+      {page === 1 ? <First /> : page === 2 ? <Second /> : page === 3 ? <Third /> : <Fourth/>}
       <View style={styles.buttons}>
       {page == 1 && (
         <TouchableOpacity
@@ -42,10 +123,7 @@ const Page = () => {
       {page == 4 && (
         <TouchableOpacity
         style={{ ...styles.button, backgroundColor: 'green', marginLeft: 'auto'  }}
-          onPress={() => {
-            let pg = page;
-            setPage(pg - 1);
-          }}
+          onPress={saveLogement}
         >
           <Text style={styles.text}>Save</Text>
         </TouchableOpacity>
@@ -63,7 +141,6 @@ const Page = () => {
         </TouchableOpacity>
       )}
     </View>
-    </ContProvider>
    </View>
   );
 };

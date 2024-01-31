@@ -93,7 +93,7 @@ useEffect (()=> {
 useEffect (()=> {
 	myImages.pop()
 },[])
-
+const perm=[]
 
 const uploadImage = async () => {
     const blob = await new Promise((resolve, reject) => {

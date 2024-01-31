@@ -14,9 +14,32 @@ app.use(express.json());
 connectDB();
 
 
+app.post('/logements/initialize', async (req, res) => {
+  try {
+      // Read logements data from JSON file
+      const logementsData = JSON.parse(fs.readFileSync('init_data.json', 'utf8'));
+
+      // Loop through each logement object
+      for (const logement of logementsData) {
+          // Check if the value of the attribute already exists in the collection
+          const existingLogement = await Logement.findOne({ id: logement.id });
+
+          // Insert the logement object only if the value doesn't exist
+          if (!existingLogement) {
+              await Logement.create(logement);
+          }
+      }
+
+      res.json({ message: 'Logements collection initialized successfully.' });
+  } catch (error) {
+      res.status(500).send(error.message);
+  }
+});
+
 app.post('/logement', async (req, res) => {
   try {
     const logementData = req.body;
+    console.log(logementData)
     const logement = await Logement.create(logementData);
     res.json(logement);
   } catch (error) {
@@ -49,27 +72,6 @@ app.get('/logements/:id', async (req, res) => {
 
 
 
-app.post('/logements/initialize', async (req, res) => {
-    try {
-        // Read logements data from JSON file
-        const logementsData = JSON.parse(fs.readFileSync('init_data.json', 'utf8'));
-
-        // Loop through each logement object
-        for (const logement of logementsData) {
-            // Check if the value of the attribute already exists in the collection
-            const existingLogement = await Logement.findOne({ id: logement.id });
-
-            // Insert the logement object only if the value doesn't exist
-            if (!existingLogement) {
-                await Logement.create(logement);
-            }
-        }
-
-        res.json({ message: 'Logements collection initialized successfully.' });
-    } catch (error) {
-        res.status(500).send(error.message);
-    }
-});
 
 /// Reservation endpoints -------------------------------------------------------
 const Reservation = require('./reservation');

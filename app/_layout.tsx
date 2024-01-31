@@ -8,6 +8,7 @@ import * as SecureStore from 'expo-secure-store';
 import { ClerkProvider, useAuth, useUser } from '@clerk/clerk-expo';
 import { AuthProvider } from '@/contex/LoginContex';
 import { initData } from '@/constants/api';
+import { ContProvider } from '@/contex/context';
 
 
 const CLERK_PUBLISHABLE_KEY = 'pk_test_c3RpbGwtcGFudGhlci00NC5jbGVyay5hY2NvdW50cy5kZXYk';
@@ -72,7 +73,9 @@ const RootLayout = () => {
   return (
     <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY} tokenCache={tokenCache}>
      <AuthProvider>
+      <ContProvider>
         <RootLayoutNav />
+        </ContProvider>
       </AuthProvider> 
     </ClerkProvider>
   );
@@ -149,8 +152,6 @@ const RootLayoutNav = () => {
         }}
       />
 
-
-
       <Stack.Screen
         name="hoster/index"
         options={{
@@ -170,7 +171,6 @@ const RootLayoutNav = () => {
         }}
         />
        <Stack.Screen name="listing/[id]" options={{ headerTitle: '',headerTransparent:true }} />
-       <Stack.Screen name="naviging/[id]" options={{ headerTitle: '',headerTransparent:true }} />
        <Stack.Screen name="reserving/[id]" options={{ headerTitle: '',headerTransparent:false }} />
        <Stack.Screen
         name="(modals)/booking"

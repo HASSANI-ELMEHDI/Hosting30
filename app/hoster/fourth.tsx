@@ -19,7 +19,7 @@ import Colors from '@/constants/Colors';
 const numColumns = 3;
 const screenWidth = Dimensions.get('window').width;
 const itemWidth = screenWidth / numColumns;
-
+import {firebase} from '@/config'
 const imgDir = FileSystem.documentDirectory + 'images/';
 
 const ensureDirExists = async () => {
@@ -31,7 +31,6 @@ const ensureDirExists = async () => {
 
 export default function App() {
 	const [modalVisible, setModalVisible] = useState(false);
-
 	const openModal = () => {
 	  setModalVisible(true);
 	};
@@ -69,6 +68,7 @@ export default function App() {
 			saveImage(result.assets[0].uri);
 		}
 		setAddingImage(false);
+		
 	};
   // Save image to file system
 const saveImage = async (uri: string) => {
@@ -78,9 +78,45 @@ const saveImage = async (uri: string) => {
 	await FileSystem.copyAsync({ from: uri, to: dest });
 	setImages([...images, dest]);
 	closeModal()
+	uploadImage()
 };
 
-
+const uploadImage = async () => {
+    const blob = await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.onload = function() {
+        resolve(xhr.response);
+      };
+      xhr.onerror = function() {
+        reject(new TypeError('Network request failed'));
+      };
+      xhr.responseType = 'blob';
+      xhr.open('GET', images[images.length-1], true);
+      xhr.send(null);
+    })
+    const ref = firebase.storage().ref().child(`Pictures/Image1`)
+    const snapshot = ref.put(blob)
+    snapshot.on(firebase.storage.TaskEvent.STATE_CHANGED,
+      ()=>{
+        setUploading(true)
+      },
+      (error) => {
+        setUploading(false)
+        console.log(error)
+        blob.close()
+        return 
+      },
+      () => {
+        snapshot.snapshot.ref.getDownloadURL().then((url) => {
+          setUploading(false)
+          console.log("Download URL: ", url)
+		  
+          blob.close()
+          return url
+        })
+      }
+      )
+  }
 
 // Delete image from file system
 const deleteImage = async (uri: string) => {

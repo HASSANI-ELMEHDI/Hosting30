@@ -1,9 +1,17 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
-import React from 'react';
+import React,{useState} from 'react';
+import Colors from '@/constants/Colors';
+import { usePro } from '@/contex/context';
 
 
 const first = () => {
+const { Type,setType}=usePro()
+const handleClick = (item:string) => {
+  setActiveIndex(item);
+  setType(item);
+  console.log(item);
+};
 
   const categories = [
     {
@@ -26,11 +34,8 @@ const first = () => {
     },
   ];
   
-
-  const handleClick = (item:String) => {
-    // Handle click event for the elements
-    console.log(`Clicked on ${item}`);
-  };
+  const [activeIndex, setActiveIndex] = useState('');
+  
 
   return (
     <View style={styles.container}>
@@ -38,24 +43,36 @@ const first = () => {
        {categories.map((item, index) => (
   <View style={styles.row} key={index}>
     <TouchableOpacity
-      style={styles.box}
-      onPress={() => handleClick(`Element`)}
-    >
+      style={[
+        styles.box,
+        {
+          borderColor: activeIndex === item.name ? Colors.yellow : Colors.grey,
+        },
+      ]}
+      onPress={() => handleClick(item.name)}
+      >
       <MaterialIcons
         name={item.icon as any}
         size={60}
+        color={activeIndex == item.name ? Colors.yellow : Colors.grey}
       />
-      <Text>{item.name}</Text>
+      <Text style={{ color: activeIndex === item.name ? Colors.yellow : Colors.grey }}>{item.name}</Text>
     </TouchableOpacity>
       <TouchableOpacity
-        style={styles.box}
-        onPress={() => handleClick(`Element`)}
-      >
+       style={[
+            styles.box,
+            {
+              borderColor: activeIndex === item.name2 ? Colors.yellow : Colors.grey,
+            },
+          ]}
+          onPress={() => handleClick(item.name2)}
+       >
         <MaterialIcons
           name={item.icon2 as any}
           size={60}
+          color={activeIndex == item.name2 ? Colors.yellow : Colors.grey}
         />
-         <Text>{item.name2}</Text>
+         <Text style={{ color: activeIndex === item.name2 ? Colors.yellow : Colors.grey }}>{item.name2}</Text>
       </TouchableOpacity>
   </View>
 ))}

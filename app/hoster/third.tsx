@@ -91,7 +91,7 @@ try{
        <View style={styles.container}>
         <MapView style={styles.map} ref={map} onPress={onMapPress} provider={PROVIDER_GOOGLE} initialRegion={ {latitude:location.coords.latitude,longitude:location.coords.longitude,latitudeDelta:LATITUDE_DELTA,longitudeDelta:LONGITUDE_DELTA}}> 
           {Coordina &&(
-          <Marker coordinate={Coordina} />
+          <Marker coordinate={Coordina}  pinColor={Colors.yellow}/>
           )
 }
           <Marker  coordinate={{latitude:location.coords.latitude,longitude:location.coords.longitude}} >      

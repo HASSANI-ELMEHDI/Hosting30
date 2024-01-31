@@ -106,7 +106,7 @@ const uploadImage = async () => {
       xhr.open('GET', images[lastIndex], true);
       xhr.send(null);
     })
-    const ref = firebase.storage().ref().child(`Pictures/Image1`)
+    const ref = firebase.storage().ref().child(`Pictures/Image${images[images.length-1]}`)
     const snapshot = ref.put(blob)
     snapshot.on(firebase.storage.TaskEvent.STATE_CHANGED,
       ()=>{

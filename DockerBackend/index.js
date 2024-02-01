@@ -3,7 +3,7 @@ const connectDB = require('./db')
 
 const fs = require('fs');
 const Logement = require('./logement');
-
+const Wish=require('./wish')
 
 
 const app = express();
@@ -93,6 +93,7 @@ app.get('/userlogements/:hostId', async (req, res) => {
 
 /// Reservation endpoints -------------------------------------------------------
 const Reservation = require('./reservation');
+const { withSafeAreaInsets } = require('react-native-safe-area-context');
 // Create a new reservation
 app.post('/reservations', async (req, res) => {
     try {
@@ -147,6 +148,18 @@ app.post('/reservations', async (req, res) => {
     }
   });
 
+
+  //wish
+  app.post('/wish', async (req, res) => {
+    try {
+      const wishData = req.body;
+      const wish = await Wish.create(wishData);
+      res.json(wish);
+    } catch (error) {
+      res.status(500).send(error.message);
+    }
+  });
+  
 
 
 

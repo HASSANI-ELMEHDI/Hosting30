@@ -1,8 +1,9 @@
 import { defaultStyles } from '@/constants/Styles';
+import { useAuth, useUser } from '@clerk/clerk-expo';
 
 import { Ionicons } from '@expo/vector-icons';
 import { BottomSheetFlatList } from '@gorhom/bottom-sheet';
-import { Link } from 'expo-router';
+import { Link, router } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import { Image, ListRenderItem, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
@@ -16,10 +17,15 @@ interface Props{
 }
 
 const Listings = ({listing:items, refresh,category}:Props) => {
-
+  const { user } = useUser();
+  const { isLoaded, isSignedIn } = useAuth();
 
   const wish=(id:string)=>{
+    if(isSignedIn){
     console.log(id)
+    }else router.replace('/login');
+
+
   }
     const [loading, setLoading] = useState<boolean>(false);
     const listRef = useRef<FlatList>(null);

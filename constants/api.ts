@@ -110,6 +110,17 @@ export const deleteReservation = (id: string): Promise<any> => {
     });
 };
 
+export const deleteLogment = (id: string): Promise<any> => {
+  return axios
+    .delete(`${URL}${id}`)
+    .then(response => {
+      return response.data;
+    })
+    .catch(error => {
+      console.error(error);
+    });
+};
+
 
 export const fetchLogmentById=(id:String):Promise<any>=>{
   return axios.get(`${URL}${id}`).then(response=>{

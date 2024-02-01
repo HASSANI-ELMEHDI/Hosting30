@@ -17,6 +17,10 @@ interface Props{
 
 const Listings = ({listing:items, refresh,category}:Props) => {
 
+
+  const wish=(id:string)=>{
+    console.log(id)
+  }
     const [loading, setLoading] = useState<boolean>(false);
     const listRef = useRef<FlatList>(null);
     useEffect(() => {
@@ -40,16 +44,12 @@ const Listings = ({listing:items, refresh,category}:Props) => {
         <TouchableOpacity>
           <View style={styles.listings}>
           <Image source={{uri:item["medium_url"][0]}} style={styles.image}/>
-            <TouchableOpacity style={styles.heart}>
+            <TouchableOpacity style={styles.heart} onPress={() => wish(item._id)}>
             <Ionicons name="heart-outline" size={24} color="#000" />
           </TouchableOpacity>
           </View>
           <View style={{ flexDirection: 'row', marginLeft: 20 }}>
             <Text style={{ fontSize: 16, fontFamily: 'mon-sb' ,color:'#FE0404'}}>{item.name}</Text>
-           {/* <View style={{ flexDirection: 'row', gap: 4 }}>
-              <Ionicons name="star" size={16} />
-              <Text style={{ fontFamily: 'mon-sb' }}>{item.review_scores_rating / 20}</Text>
-            </View>*/}
           </View>
           <Text style={{ fontFamily: 'mon',marginLeft: 20 }}>{item.room_type}</Text>
           <View style={{ flexDirection: 'row',marginLeft: 20 , gap: 4 }}>

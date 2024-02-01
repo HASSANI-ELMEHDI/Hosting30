@@ -51,23 +51,8 @@ const ExploreHeader = ({ onCategoryChanged }: Props) => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#fff', marginTop:40}}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#fff', marginTop:0}}>
       <View style={styles.container}>
-        <View style={styles.actionRow}>
-          
-              <View style={styles.searchBtn}>
-                <Ionicons name="search" size={24} style={{color:Colors.green}} />
-                <View>
-                  <Text style={{ fontFamily: 'mon-sb', color:Colors.green }}>Where will the next match be?</Text>
-                  <Text style={{ color: Colors.grey, fontFamily: 'mon' }}>Rent your logement</Text>
-                </View>
-              </View>
-           
-          <TouchableOpacity style={styles.filterBtn}>
-            <Ionicons name="options-outline" size={24} />
-          </TouchableOpacity>
-        </View>
-
         <ScrollView
           horizontal
           ref={scrollRef}

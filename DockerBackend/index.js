@@ -80,6 +80,17 @@ app.get('/userlogements/:hostId', async (req, res) => {
   }
 });
 
+  // Delete a logment by ID
+  app.delete('/logements/:id', async (req, res) => {
+    try {
+      const log = await Logement.findByIdAndDelete(req.params.id);
+      if (!log) throw new Error('Reservation not found');
+      res.json({ message: 'Reservation deleted successfully' });
+    } catch (error) {
+      res.status(500).send(error.message);
+    }
+  });
+
 /// Reservation endpoints -------------------------------------------------------
 const Reservation = require('./reservation');
 // Create a new reservation

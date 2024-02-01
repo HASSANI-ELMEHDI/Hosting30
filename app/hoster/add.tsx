@@ -9,6 +9,7 @@ import { useUser } from '@clerk/clerk-expo';
 import { usePro } from '@/contex/context';
 import { createLogement } from '@/constants/api';
 import { router } from 'expo-router';
+import axios from 'axios';
 
 function generateRandomId() {
   const timestamp = new Date().getTime();
@@ -17,7 +18,7 @@ function generateRandomId() {
   return id;
 }
 const Page = () => {
-  const [done,setDone]=useState(false)
+
   const { user } = useUser();
   const [email, setEmail] = useState(user?.emailAddresses[0].emailAddress);
   const [firstName, setFirstName] = useState(user?.firstName);
@@ -33,6 +34,7 @@ const Page = () => {
     Price,setPrice,
     Coordina,setCoordina,
     myImages,setMyImages,
+    done,setDone
   }=usePro()
     const convertDateFormat = (originalDate) => {
       const parts = originalDate.split('/');
@@ -40,9 +42,18 @@ const Page = () => {
       return formattedDate;
     };
 const saveLogement=()=>{
-  setTimeout(() => {
-    
-    const newLogement={
+ console.log('Before saving :: ',myImages)
+ const apiUrl = 'https://api.bigdatacloud.net/data/reverse-geocode-client';
+ const latitude = Coordina?.latitude;
+ const longitude = Coordina?.longitude;
+ const localityLanguage = 'en';
+ 
+ axios
+   .get(`${apiUrl}?latitude=${latitude}&longitude=${longitude}&localityLanguage=${localityLanguage}`)
+   .then(response => {
+     // Traitement de la réponse ici
+     console.log("ou je suis ????? ",response.data);
+     const newLogement={
       "type": Type,
       "id": generateRandomId(),
       "listing_url": myImages[0],
@@ -55,7 +66,7 @@ const saveLogement=()=>{
       "host_name": firstName+" "+lastName,
       "host_since": convertDateFormat(user?.createdAt!.toLocaleDateString()),
       "host_picture_url": user?.imageUrl,
-      "smart_location": "Bouznika",
+      "smart_location":response.data?.locality+","+ response.data?.city+"("+response.data?.countryCode+")",
       "latitude": Coordina?.latitude,
       "longitude": Coordina?.longitude,
       "accommodates": Numberppl,
@@ -68,26 +79,29 @@ const saveLogement=()=>{
       "End":End
      }
      createLogement(newLogement).then(data => {
-		  console.log(data); 
+      setType("")
+      setStart(new Date())
+      setEnd(new Date())
+      setNumberppl(1)
+      setDescription("")
+      setRules("")
+      setAccess("")
+      setPrice(0)
+      setCoordina(null)
+      setMyImages([])
+      setDone(false)
 		  router.replace('/hoster/');
 		})
 		.catch(error => {
 		  console.error(error);
 		});
-    setType("")
-  setStart(new Date())
-  setEnd(new Date())
-  setNumberppl(1)
-  setDescription("")
-  setRules("")
-  setAccess("")
-  setPrice(0)
-  setCoordina(null)
-  setMyImages([])
-  
-
-  }, 3000);
-  
+   
+   })
+   .catch(error => {
+     // Gestion des erreurs ici
+     console.error(error);
+   });
+    
 }
 
 
@@ -122,8 +136,9 @@ const saveLogement=()=>{
       )}
       {page == 4 && (
         <TouchableOpacity
-        style={{ ...styles.button, backgroundColor: 'green', marginLeft: 'auto'  }}
+        style={{ ...styles.button,  backgroundColor: done ? 'green' : 'gray', marginLeft: 'auto'  }}
           onPress={saveLogement}
+          disabled ={!done}
         >
           <Text style={styles.text}>Save</Text>
         </TouchableOpacity>

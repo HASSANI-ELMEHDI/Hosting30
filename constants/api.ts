@@ -5,6 +5,7 @@ const URL=`http://${IP_ADDRESS}:5000/logements/`
 const URL_init=`http://${IP_ADDRESS}:5000/logements/initialize`
 const URL_reservations = `http://${IP_ADDRESS}:5000/reservations/`;
 const URL_logement=`http://${IP_ADDRESS}:5000/logement`
+const URL_logements_byHoster=`http://${IP_ADDRESS}:5000/userlogements/`
 
 
 console.log(URL)
@@ -17,6 +18,7 @@ export const fetchData = () => {
       console.error(error);
     });
 };
+
 
 
 export const initData = () => {
@@ -33,6 +35,17 @@ export const initData = () => {
 export const fetchReservations = (): Promise<any> => {
   return axios
     .get(URL_reservations)
+    .then(response => {
+      return response.data;
+    })
+    .catch(error => {
+      console.error(error);
+    });
+};
+
+export const getLogmentsByHoster = (id: string): Promise<any> => {
+  return axios
+    .get(URL_logements_byHoster+id)
     .then(response => {
       return response.data;
     })

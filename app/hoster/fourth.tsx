@@ -31,7 +31,7 @@ const ensureDirExists = async () => {
 };
 
 export default function App() {
-	const {myImages,setMyImages}=usePro()
+	const {myImages,setMyImages,done,setDone}=usePro()
 	const [modalVisible, setModalVisible] = useState(false);
 	const openModal = () => {
 	  setModalVisible(true);
@@ -96,6 +96,7 @@ useEffect (()=> {
 const perm=[]
 
 const uploadImage = async () => {
+  setDone(false)
     const blob = await new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
       xhr.onload = function() {
@@ -126,6 +127,7 @@ const uploadImage = async () => {
         snapshot.snapshot.ref.getDownloadURL().then((url) => {
           setUploading(false)
 		  myImages.push(url)
+      setDone(true)
           blob.close()
           return url
         })

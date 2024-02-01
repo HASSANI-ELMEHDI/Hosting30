@@ -26,6 +26,8 @@ Coordina:Coordinate|null
 setCoordina:(Coordina:Coordinate|null)=>void;
 myImages:string[]
 setMyImages:(myImages:string[])=>void
+done:boolean
+setDone:(done:boolean)=>void
 }
 
 const Context = createContext<ContextType | undefined>(undefined);
@@ -46,7 +48,7 @@ export const ContProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [Price,setPrice]=useState(0);
   const [Coordina,setCoordina]=useState<Coordinate|null>(null)
   const [myImages,setMyImages]=useState([""])
-
+  const [done,setDone]=useState(false)
 
   const ContextValue: ContextType = {
     Type,setType,
@@ -59,6 +61,7 @@ export const ContProvider: React.FC<AuthProviderProps> = ({ children }) => {
     Price,setPrice,
     Coordina,setCoordina,
     myImages,setMyImages,
+    done,setDone
   };
 
   return <Context.Provider value={ContextValue}>{children}</Context.Provider>;

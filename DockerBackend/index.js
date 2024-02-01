@@ -71,7 +71,14 @@ app.get('/logements/:id', async (req, res) => {
 });
 
 
-
+app.get('/userlogements/:hostId', async (req, res) => {
+  try {
+    const logments = await Logement.find({ host_id: req.params.hostId });
+    res.json(logments);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 /// Reservation endpoints -------------------------------------------------------
 const Reservation = require('./reservation');

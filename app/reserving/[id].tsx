@@ -39,7 +39,6 @@ const DetailsPage = () => {
   useEffect(() => {
 	if( selectedStartDate && selectedEndDate) 
 	{
-		// ToDo : calculate nbr of days bw start & end date
 		const nbr = parseInt(endDate.split(" ")[2]) - parseInt(startDate.split(" ")[2])
 		setNbrNights(nbr +1) 
 	}
@@ -47,8 +46,7 @@ const DetailsPage = () => {
   }, [selectedStartDate ,selectedEndDate]);
 
 
-  const minDate = new Date(); // Todo : min from database
-  const maxDate = new Date(2024, 0,25 ); // Todo : max from database
+
 
   useEffect(() => {
     fetchData()
@@ -57,6 +55,8 @@ const DetailsPage = () => {
       });
   }, []);
   const listing = (listingsData as any[]).find((item) => item._id === id);
+  const minDate = listing?.Start; // Todo : min from database
+  const maxDate = listing?.End; // Todo : max from database
   const navigation = useNavigation();
   const { user } = useUser();
   const { isLoaded, isSignedIn } = useAuth();

@@ -1,8 +1,10 @@
 import { defaultStyles } from '@/constants/Styles';
+import { createWish } from '@/constants/api';
+import { useAuth, useUser } from '@clerk/clerk-expo';
 
 import { Ionicons } from '@expo/vector-icons';
 import { BottomSheetFlatList } from '@gorhom/bottom-sheet';
-import { Link } from 'expo-router';
+import { Link, router } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import { Image, ListRenderItem, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
@@ -16,7 +18,26 @@ interface Props{
 }
 
 const Listings = ({listing:items, refresh,category}:Props) => {
+  const { user } = useUser();
+  const { isLoaded, isSignedIn } = useAuth();
 
+  const wish=(id:string)=>{
+    if(isSignedIn){
+      const newWish={
+        logementId: id,
+        userId:user?.id
+      }
+      createWish(newWish)
+      .then(data => {
+        console.log(data); 
+      })
+      .catch(error => {
+        console.error(error);
+      });
+    }else router.replace('/login');
+
+
+  }
     const [loading, setLoading] = useState<boolean>(false);
     const listRef = useRef<FlatList>(null);
     useEffect(() => {
@@ -40,16 +61,12 @@ const Listings = ({listing:items, refresh,category}:Props) => {
         <TouchableOpacity>
           <View style={styles.listings}>
           <Image source={{uri:item["medium_url"][0]}} style={styles.image}/>
-            <TouchableOpacity style={styles.heart}>
+            <TouchableOpacity style={styles.heart} onPress={() => wish(item._id)}>
             <Ionicons name="heart-outline" size={24} color="#000" />
           </TouchableOpacity>
           </View>
           <View style={{ flexDirection: 'row', marginLeft: 20 }}>
             <Text style={{ fontSize: 16, fontFamily: 'mon-sb' ,color:'#FE0404'}}>{item.name}</Text>
-           {/* <View style={{ flexDirection: 'row', gap: 4 }}>
-              <Ionicons name="star" size={16} />
-              <Text style={{ fontFamily: 'mon-sb' }}>{item.review_scores_rating / 20}</Text>
-            </View>*/}
           </View>
           <Text style={{ fontFamily: 'mon',marginLeft: 20 }}>{item.room_type}</Text>
           <View style={{ flexDirection: 'row',marginLeft: 20 , gap: 4 }}>

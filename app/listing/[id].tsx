@@ -5,13 +5,15 @@ import { View, Text, StyleSheet, Image, Dimensions, TouchableOpacity, Share, Scr
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import Colors from '@/constants/Colors';
 import { defaultStyles } from '@/constants/Styles';
-import { fetchData } from '@/constants/api';
+import { createWish, fetchData } from '@/constants/api';
 import Itinerary from '@/components/Itinerary';
 import MapScreen from '@/components/Itinerary';
+import { useAuth, useUser } from '@clerk/clerk-expo';
 
 const { width } = Dimensions.get('window');
 const IMG_HEIGHT = 300;
 const DetailsPage = () => {
+  
 
   const [showMap,setShowMap] = useState(false);
   const renderItem = ({ item }:any) => (
@@ -20,7 +22,24 @@ const DetailsPage = () => {
 
   const { id } = useLocalSearchParams();
   const [listingsData , setData] = useState([]);
+  const { user } = useUser();
+  const { isLoaded, isSignedIn } = useAuth();
 
+  const wish=()=>{
+    if(isSignedIn){
+      const newWish={
+        logementId: id,
+        userId:user?.id
+      }
+      createWish(newWish)
+      .then(data => {
+        console.log(data); 
+      })
+      .catch(error => {
+        console.error(error);
+      });
+    }else router.replace('/login');
+  }
   useEffect(() => {
     console.log("Comming with id :", id)
     fetchData()
@@ -60,7 +79,7 @@ const DetailsPage = () => {
           <TouchableOpacity style={styles.roundButton} onPress={shareListing}>
             <Ionicons name="share-outline" size={22} color={'#000'} />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.roundButton}>
+          <TouchableOpacity style={styles.roundButton} onPress={wish}>
             <Ionicons name="heart-outline" size={22} color={'#000'} />
           </TouchableOpacity>
           

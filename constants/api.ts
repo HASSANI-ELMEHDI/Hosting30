@@ -7,7 +7,7 @@ const URL_reservations = `http://${IP_ADDRESS}:5000/reservations/`;
 const URL_logement=`http://${IP_ADDRESS}:5000/logement`
 const URL_logements_byHoster=`http://${IP_ADDRESS}:5000/userlogements/`
 const URL_wish = `http://${IP_ADDRESS}:5000/wish/`
-
+const URL_wishs=`http://${IP_ADDRESS}:5000/wishs`
 
 console.log(URL)
 export const fetchData = () => {
@@ -143,14 +143,16 @@ export const createWish = (wishData: any): Promise<any> => {
     });
 };
 
-
-export const fetchWishById=(id:String):Promise<any>=>{
-  return axios.get(`${URL_wish}${id}`).then(response=>{
-    return response.data;
-  }).catch(error => {
-    console.error(error);
-  });
-}
+export const fetchWishById =  (id: string): Promise<any> => {
+    return axios.get(`${URL_wish}${id}`)
+    .then(response => {
+      console.log(response)
+      return response.data;
+    })
+    .catch(error => {
+      console.error(error);
+    });
+};
 
 
 
@@ -164,3 +166,19 @@ export const deleteWish = (id: string): Promise<any> => {
       console.error(error);
     });
 };
+
+
+export const fetchWishs = (): Promise<any> => {
+  return axios
+    .get(URL_wishs)
+    .then(response => {
+      return response.data;
+    })
+    .catch(error => {
+      console.error(error);
+    });
+};
+
+
+
+

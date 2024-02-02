@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const wishSchema = new mongoose.Schema({
+  id:String,
   logementId: String,
   userId:String
 });

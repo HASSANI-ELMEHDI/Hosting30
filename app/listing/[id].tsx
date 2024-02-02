@@ -5,7 +5,7 @@ import { View, Text, StyleSheet, Image, Dimensions, TouchableOpacity, Share, Scr
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import Colors from '@/constants/Colors';
 import { defaultStyles } from '@/constants/Styles';
-import { createWish, fetchData } from '@/constants/api';
+import { createWish, deleteWish, fetchData } from '@/constants/api';
 import Itinerary from '@/components/Itinerary';
 import MapScreen from '@/components/Itinerary';
 import { useAuth, useUser } from '@clerk/clerk-expo';
@@ -24,22 +24,40 @@ const DetailsPage = () => {
   const [listingsData , setData] = useState([]);
   const { user } = useUser();
   const { isLoaded, isSignedIn } = useAuth();
+  const [exist,setExist]=useState(false)
 
-  const wish=()=>{
-    if(isSignedIn){
-      const newWish={
-        logementId: id,
-        userId:user?.id
-      }
-      createWish(newWish)
-      .then(data => {
-        console.log(data); 
-      })
-      .catch(error => {
-        console.error(error);
-      });
-    }else router.replace('/login');
-  }
+  const wish =  () => {
+    if (isSignedIn) {
+      const per = `${id}${user?.id}`;
+        if(exist){
+        deleteWish(per);
+        setExist(false)
+        }
+        else{
+          // If the delete operation fails with a 404 error, it means the wish doesn't exist
+          console.log(`Wish with ID ${per} does not exist. Creating a new one.`);
+  
+          const newWish = {
+            id: per,
+            logementId: id,
+            userId: user?.id,
+          };
+  
+          try {
+            const data =  createWish(newWish);
+            console.log(data);
+            setExist(true)
+
+          } catch (createError) {
+            console.error(createError);
+          }
+        }
+    } else {
+      router.replace('/login');
+    }
+  };
+  
+  
   useEffect(() => {
     console.log("Comming with id :", id)
     fetchData()

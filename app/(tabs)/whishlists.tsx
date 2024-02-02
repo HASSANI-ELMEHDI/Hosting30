@@ -28,14 +28,14 @@ const WishList = ({listing:items, refresh,category}:Props) => {
     fetchWishs()
       .then(data => {
         setWishs(data.filter((item) => item.userId === user?.id).map((item) => item.logementId));
-        console.log(data);
         fetchData().then(data=>{
           setLoges(data)
           const filteredSecondTable = Loges.filter(item => Wishs.includes(item._id));
           setFinal(filteredSecondTable)
+          console.log("thisssss",final)
         })
       });
-  }, [Wishs,Loges]);
+  }, [Wishs]);
   const  test=(idLogement:string)=>{
     if(isSignedIn){
       if(Wishs.filter(item=>item.logementId===idLogement).length)
@@ -68,35 +68,30 @@ const WishList = ({listing:items, refresh,category}:Props) => {
           setLoading(false);
         }, 200);
       }, [category]);
-      const renderRow: ListRenderItem<any> = ({ item }:any) => {
-        if(!test(item._id)) return (<></>)
-        return(<Link href={`/listing/${item._id}`} asChild>
-        <TouchableOpacity>
-          <View style={styles.listings}>
-          <Image source={{uri:item["medium_url"][0]}} style={styles.image}/>
-            <TouchableOpacity style={styles.heart} onPress={() => wish(item._id)} disabled={test(item._id)} >
-            <Ionicons name="heart" size={24} 
-            color={Colors.primary} />
-          </TouchableOpacity>
-          </View>
-          <View style={{ flexDirection: 'row', marginLeft: 20 }}>
-            <Text style={{ fontSize: 16, fontFamily: 'mon-sb' ,color:'#FE0404'}}>{item.name}</Text>
-          </View>
-          <Text style={{ fontFamily: 'mon',marginLeft: 20 }}>{item.room_type}</Text>
-          <View style={{ flexDirection: 'row',marginLeft: 20 , gap: 4 }}>
-            <Text style={{ fontFamily: 'mon-sb' ,color:'#FE0404'}}>€ {item.price}</Text>
-            <Text style={{ fontFamily: 'mon' ,color:'#FE0404'}}>per night</Text>
-          </View>
-        </TouchableOpacity>
-      </Link>
-      )}
-      return ( 
-      <FlatList
-        data={final}
-        renderItem={renderRow}
-        keyExtractor={(item:any, index:any) => index.toString()}
-        horizontal={true} // Set to true if you want a horizontal list
-        />)
+      return (
+        <>
+          {final.map((item) => (
+            <Link key={item._id} href={`/listing/${item._id}`} asChild>
+              <TouchableOpacity>
+                <View style={styles.listings}>
+                  <Image source={{ uri: item["medium_url"][0] }} style={styles.image} />
+                  <TouchableOpacity style={styles.heart} onPress={() => wish(item._id)} disabled={test(item._id)}>
+                    <Ionicons name="heart" size={24} color={Colors.primary} />
+                  </TouchableOpacity>
+                </View>
+                <View style={{ flexDirection: 'row', marginLeft: 20 }}>
+                  <Text style={{ fontSize: 16, fontFamily: 'mon-sb', color: '#FE0404' }}>{item.name}</Text>
+                </View>
+                <Text style={{ fontFamily: 'mon', marginLeft: 20 }}>{item.room_type}</Text>
+                <View style={{ flexDirection: 'row', marginLeft: 20, gap: 4 }}>
+                  <Text style={{ fontFamily: 'mon-sb', color: '#FE0404' }}>€ {item.price}</Text>
+                  <Text style={{ fontFamily: 'mon', color: '#FE0404' }}>per night</Text>
+                </View>
+              </TouchableOpacity>
+            </Link>
+          ))}
+        </>
+      );
 };
 
 const styles=StyleSheet.create({

@@ -46,7 +46,19 @@ const WishList = ({listing:items, refresh,category}:Props) => {
   const { isLoaded, isSignedIn } = useAuth();
     const wish = async  (id: string) => {
       const per = `${id}${user?.id}`;
-      deleteWish(per)
+      deleteWish(per).then(()=>{
+        fetchWishs()
+        .then(data => {
+          setWishs(data.filter((item) => item.userId === user?.id).map((item) => item.logementId));
+          fetchData().then(data=>{
+            setLoges(data)
+            const filteredSecondTable = Loges.filter(item => Wishs.includes(item._id));
+            setFinal(filteredSecondTable)
+          })
+        });
+      }
+      
+      )
     };
     
     
@@ -72,6 +84,7 @@ const WishList = ({listing:items, refresh,category}:Props) => {
         <ScrollView
 				showsVerticalScrollIndicator={false}
 				contentContainerStyle={{ paddingBottom: 100 }}>
+          {final.length===0 && (<Text style={{textAlign : 'center'}}>There is no wishes</Text>)}
           {final.map((item) => (
             <Link key={item._id} href={`/listing/${item._id}`} asChild>
               <TouchableOpacity>

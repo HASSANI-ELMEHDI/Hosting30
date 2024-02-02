@@ -24,7 +24,6 @@ const Listings = ({listing:items, refresh,category}:Props) => {
     fetchWishs()
       .then(data => {
         setWishs(data.filter((item => item.userId === user?.id)));
-        console.log(data);
       });
   }, [Wishs]);
 
@@ -47,7 +46,6 @@ const Listings = ({listing:items, refresh,category}:Props) => {
           console.log(`Wish with ID ${per} deleted.`);
         }else{
             // If the delete operation fails with a 404 error, it means the wish doesn't exist
-            console.log(`Wish with ID ${per} does not exist. Creating a new one.`);
     
             const newWish = {
               id: per,
@@ -57,7 +55,6 @@ const Listings = ({listing:items, refresh,category}:Props) => {
     
             try {
               const data =  createWish(newWish);
-              console.log(data);
             } catch (createError) {
               console.error(createError);
             }

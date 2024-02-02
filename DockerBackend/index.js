@@ -39,7 +39,6 @@ app.post('/logements/initialize', async (req, res) => {
 app.post('/logement', async (req, res) => {
   try {
     const logementData = req.body;
-    console.log(logementData)
     const logement = await Logement.create(logementData);
     res.json(logement);
   } catch (error) {
@@ -176,7 +175,6 @@ app.post('/reservations', async (req, res) => {
       const wish = await Wish.findOne({id:req.params.id});
       if (!wish) throw new Error('wish not found');
       res.json(wish);
-      console.log( res.json(wish));
     } catch (error) {
       res.status(500).send(error.message);
     }

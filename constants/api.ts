@@ -146,7 +146,6 @@ export const createWish = (wishData: any): Promise<any> => {
 export const fetchWishById =  (id: string): Promise<any> => {
     return axios.get(`${URL_wish}${id}`)
     .then(response => {
-      console.log(response)
       return response.data;
     })
     .catch(error => {

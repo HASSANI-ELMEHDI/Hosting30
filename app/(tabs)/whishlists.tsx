@@ -32,7 +32,6 @@ const WishList = ({listing:items, refresh,category}:Props) => {
           setLoges(data)
           const filteredSecondTable = Loges.filter(item => Wishs.includes(item._id));
           setFinal(filteredSecondTable)
-          console.log("thisssss",final)
         })
       });
   }, [Wishs]);
@@ -46,7 +45,8 @@ const WishList = ({listing:items, refresh,category}:Props) => {
   const { user } = useUser();
   const { isLoaded, isSignedIn } = useAuth();
     const wish = async  (id: string) => {
-     
+      const per = `${id}${user?.id}`;
+      deleteWish(per)
     };
     
     
@@ -69,7 +69,9 @@ const WishList = ({listing:items, refresh,category}:Props) => {
         }, 200);
       }, [category]);
       return (
-        <>
+        <ScrollView
+				showsVerticalScrollIndicator={false}
+				contentContainerStyle={{ paddingBottom: 100 }}>
           {final.map((item) => (
             <Link key={item._id} href={`/listing/${item._id}`} asChild>
               <TouchableOpacity>
@@ -90,7 +92,7 @@ const WishList = ({listing:items, refresh,category}:Props) => {
               </TouchableOpacity>
             </Link>
           ))}
-        </>
+        </ScrollView>
       );
 };
 

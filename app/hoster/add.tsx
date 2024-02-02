@@ -42,7 +42,6 @@ const Page = () => {
       return formattedDate;
     };
 const saveLogement=()=>{
- console.log('Before saving :: ',myImages)
  const apiUrl = 'https://api.bigdatacloud.net/data/reverse-geocode-client';
  const latitude = Coordina?.latitude;
  const longitude = Coordina?.longitude;
@@ -52,7 +51,6 @@ const saveLogement=()=>{
    .get(`${apiUrl}?latitude=${latitude}&longitude=${longitude}&localityLanguage=${localityLanguage}`)
    .then(response => {
      // Traitement de la réponse ici
-     console.log("ou je suis ????? ",response.data);
      const newLogement={
       "type": Type,
       "id": generateRandomId(),

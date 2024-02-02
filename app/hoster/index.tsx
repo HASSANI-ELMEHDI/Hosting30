@@ -16,6 +16,8 @@ interface CardViewProps {
   endDate: string;
   startDate: string;
   smart_location: string;
+  type: string;
+  status: string;
   onPress: () => void;
 }
 const CardView: React.FC<CardViewProps> = ({
@@ -26,12 +28,17 @@ const CardView: React.FC<CardViewProps> = ({
   endDate,
   startDate,
   smart_location,
+  type,
+  status,
   onPress,
 }) => {
 
   return (
       <View style={styles.card} >
-         <Image source={{ uri: imageSource }} style={styles.cardImage}  />
+        <Image source={{ uri: imageSource }} style={styles.cardImage} />
+      <View style={styles.diagonalTextContainer}>
+        <Text style={styles.diagonalText}>{status}</Text>
+      </View>
         <View style={styles.cardContent}>
           <Text style={styles.emptyTitle}>{title}</Text>
           <Text style={styles.emptyText}>{smart_location}</Text>
@@ -41,7 +48,11 @@ const CardView: React.FC<CardViewProps> = ({
                 <Text style={styles.emptyBtnText}>Delete</Text>
               </TouchableOpacity>
             </View>
-            <Text style={styles.additionalText}>{moment(startDate).format('D MMM')} - {moment(endDate).format('D MMM')}</Text>
+            <View style={styles.additionalText}>
+               <Text style={{fontSize: 12,fontFamily: 'mon'}}>{moment(startDate).format('D MMM')} - {moment(endDate).format('D MMM')}</Text>
+               <Text style={styles.typeText}>{type}</Text>
+            </View>
+            
 
           </View>
         </View>
@@ -64,12 +75,17 @@ const App = () => {
   const noUserReservations = hosterLogments.length === 0;
 
   const deleteOffer= (id : string) => {
-    deleteLogment(id)
-    console.log("dellllete : "+ id)
-    getLogmentsByHoster(email)
-    .then(data => {
-      setHosterLogments(data);
-    });
+    deleteLogment(id).then( data1 => {
+      getLogmentsByHoster(email)
+      .then(data => {
+        setHosterLogments(data);
+        console.log("dellllete : "+ id)
+      });
+    }
+
+    )
+    
+    
   };
 
   return (
@@ -79,11 +95,10 @@ const App = () => {
     <View style={styles.container1}>
     {noUserReservations ? (
         <View style={styles.empty}>
-				<Text style={styles.emptyTitle}>No accommodations booked...yet!</Text>
+				<Text style={styles.emptyTitle}>No offers added...yet!</Text>
 
 				<Text style={[styles.emptyText,{marginTop : 30, marginBottom : 40}]}>
-           Your dream accommodation for the World Cup:
-           <Text style={{fontWeight :'bold'}}> Welcome the World to Your Home!</Text>
+        Open your doors to World Cup enthusiasts, transforming ordinary spaces into extraordinary memories!
 				</Text>
 				<Link href={"/hoster/add"} asChild>
 					<TouchableOpacity style={styles.emptyBtn1}>
@@ -103,6 +118,8 @@ const App = () => {
               endDate={item.End}
               startDate={item.Start}
               smart_location={item.smart_location}
+              type={item.type}
+              status ="Unoccupied"
               onPress={() => deleteOffer(item._id)}
             />
           );
@@ -152,30 +169,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: "mon",
     lineHeight: 19,
-  },
-  card: {
-    backgroundColor: '#fff',
-    marginBottom: 10,
-    borderRadius: 10,
-    padding: 0,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-    width: '95%',
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  cardImage: {
-    width: '35%',
-    height: '100%',
-    borderBottomLeftRadius: 10,
-    borderTopLeftRadius: 10,
-    marginRight: 3,
   },
   empty: {
 		marginTop: 25,
@@ -235,9 +228,47 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 10,
     bottom: 10,
+  },
+  typeText : {
     color: 'gray',
     fontSize: 12,
-    fontFamily: 'mon',
+    fontFamily: 'mon'
+  },
+  card: {
+    backgroundColor: '#fff',
+    marginBottom: 10,
+    borderRadius: 10,
+    padding: 0,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    width: '95%',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  cardImage: {
+    width: '35%',
+    height: '100%',
+    borderBottomLeftRadius: 10,
+    borderTopLeftRadius: 10,
+    marginRight: 3,
+  },
+  diagonalTextContainer: {
+    position: 'absolute',
+    borderRadius : 5,
+    paddingHorizontal : 4,
+    backgroundColor : 'white',
+    transform: [{ rotate: '0deg' }, { translateX: 5 }, { translateY: 40 }],
+  },
+  diagonalText: {
+    fontSize: 11,
+    fontWeight: 'bold',
+    color: 'black',
   },
 });
 

@@ -93,7 +93,6 @@ app.get('/userlogements/:hostId', async (req, res) => {
 
 /// Reservation endpoints -------------------------------------------------------
 const Reservation = require('./reservation');
-const { withSafeAreaInsets } = require('react-native-safe-area-context');
 // Create a new reservation
 app.post('/reservations', async (req, res) => {
     try {
@@ -150,6 +149,7 @@ app.post('/reservations', async (req, res) => {
 
 
   //wish
+  //add
   app.post('/wish', async (req, res) => {
     try {
       const wishData = req.body;
@@ -159,7 +159,26 @@ app.post('/reservations', async (req, res) => {
       res.status(500).send(error.message);
     }
   });
-  
+  //delete
+  app.delete('/wish/:id', async (req, res) => {
+    try {
+      const wish = await Wish.findByIdAndDelete(req.params.id);
+      if (!wish) throw new Error('Reservation not found');
+      res.json({ message: 'Wish deleted successfully' });
+    } catch (error) {
+      res.status(500).send(error.message);
+    }
+  });
+
+  app.get('/wish/:id', async (req, res) => {
+    try {
+      const wish = await wish.findById(req.params.id);
+      if (!wish) throw new Error('wish not found');
+      res.json(wish);
+    } catch (error) {
+      res.status(500).send(error.message);
+    }
+  });
 
 
 

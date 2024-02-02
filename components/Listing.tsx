@@ -1,4 +1,5 @@
 import { defaultStyles } from '@/constants/Styles';
+import { createWish } from '@/constants/api';
 import { useAuth, useUser } from '@clerk/clerk-expo';
 
 import { Ionicons } from '@expo/vector-icons';
@@ -22,7 +23,17 @@ const Listings = ({listing:items, refresh,category}:Props) => {
 
   const wish=(id:string)=>{
     if(isSignedIn){
-    console.log(id)
+      const newWish={
+        logementId: id,
+        userId:user?.id
+      }
+      createWish(newWish)
+      .then(data => {
+        console.log(data); 
+      })
+      .catch(error => {
+        console.error(error);
+      });
     }else router.replace('/login');
 
 

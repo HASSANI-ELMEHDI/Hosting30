@@ -1,5 +1,6 @@
+import Colors from '@/constants/Colors';
 import { defaultStyles } from '@/constants/Styles';
-import { createWish } from '@/constants/api';
+import { createWish, deleteWish, fetchWishById, fetchWishs } from '@/constants/api';
 import { useAuth, useUser } from '@clerk/clerk-expo';
 
 import { Ionicons } from '@expo/vector-icons';
@@ -18,26 +19,55 @@ interface Props{
 }
 
 const Listings = ({listing:items, refresh,category}:Props) => {
+  const [Wishs,setWishs] =useState<any[]>([]);
+  useEffect(() => {
+    fetchWishs()
+      .then(data => {
+        setWishs(data.filter((item => item.userId === user?.id)));
+        console.log(data);
+      });
+  }, [Wishs]);
+
+
+  const  test=(idLogement:string)=>{
+    if(isSignedIn){
+      if(Wishs.filter(item=>item.logementId===idLogement).length)
+      return true
+    }
+    return false
+  }
   const { user } = useUser();
   const { isLoaded, isSignedIn } = useAuth();
-
-  const wish=(id:string)=>{
-    if(isSignedIn){
-      const newWish={
-        logementId: id,
-        userId:user?.id
+    const wish = async  (id: string) => {
+      if (isSignedIn) {
+        const per = `${id}${user?.id}`;
+        if(false){
+          const existingWish = await fetchWishById(per);
+          deleteWish(per);
+          console.log(`Wish with ID ${per} deleted.`);
+        }else{
+            // If the delete operation fails with a 404 error, it means the wish doesn't exist
+            console.log(`Wish with ID ${per} does not exist. Creating a new one.`);
+    
+            const newWish = {
+              id: per,
+              logementId: id,
+              userId: user?.id,
+            };
+    
+            try {
+              const data =  createWish(newWish);
+              console.log(data);
+            } catch (createError) {
+              console.error(createError);
+            }
+          }
+      } else {
+        router.replace('/login');
       }
-      createWish(newWish)
-      .then(data => {
-        console.log(data); 
-      })
-      .catch(error => {
-        console.error(error);
-      });
-    }else router.replace('/login');
-
-
-  }
+    };
+    
+    
     const [loading, setLoading] = useState<boolean>(false);
     const listRef = useRef<FlatList>(null);
     useEffect(() => {
@@ -61,8 +91,9 @@ const Listings = ({listing:items, refresh,category}:Props) => {
         <TouchableOpacity>
           <View style={styles.listings}>
           <Image source={{uri:item["medium_url"][0]}} style={styles.image}/>
-            <TouchableOpacity style={styles.heart} onPress={() => wish(item._id)}>
-            <Ionicons name="heart-outline" size={24} color="#000" />
+            <TouchableOpacity style={styles.heart} onPress={() => wish(item._id)} disabled={test(item._id)} >
+            <Ionicons name="heart" size={24} 
+            color={test(item._id)?Colors.primary:"#000"} />
           </TouchableOpacity>
           </View>
           <View style={{ flexDirection: 'row', marginLeft: 20 }}>

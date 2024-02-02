@@ -162,7 +162,8 @@ app.post('/reservations', async (req, res) => {
   //delete
   app.delete('/wish/:id', async (req, res) => {
     try {
-      const wish = await Wish.findByIdAndDelete(req.params.id);
+      
+      const wish = await Wish.findOneAndDelete({id:req.params.id});
       if (!wish) throw new Error('Reservation not found');
       res.json({ message: 'Wish deleted successfully' });
     } catch (error) {
@@ -172,13 +173,27 @@ app.post('/reservations', async (req, res) => {
 
   app.get('/wish/:id', async (req, res) => {
     try {
-      const wish = await wish.findById(req.params.id);
+      const wish = await Wish.findOne({id:req.params.id});
       if (!wish) throw new Error('wish not found');
       res.json(wish);
+      console.log( res.json(wish));
     } catch (error) {
       res.status(500).send(error.message);
     }
   });
+
+
+
+  app.get('/wishs', async (req, res) => {
+    try {
+      const wishs = await Wish.find();
+      res.json(wishs);
+    } catch (error) {
+      res.status(500).send(error.message);
+    }
+  });
+  
+
 
 
 
